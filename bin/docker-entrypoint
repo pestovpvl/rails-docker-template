@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+cd /app
+
+if [ -z "${LD_PRELOAD+x}" ] && [ -f /usr/lib/*/libjemalloc.so.2 ]; then
+  export LD_PRELOAD="$(echo /usr/lib/*/libjemalloc.so.2)"
+  echo "Enabled jemalloc: $LD_PRELOAD"
+fi
+
+mkdir -p /app/tmp/pids
+
+if [ -f /app/tmp/pids/server.pid ]; then
+  echo "Removing stale server.pid file..."
+  rm -f /app/tmp/pids/server.pid
+fi
+
+PORT={{PORT}}
+echo "Checking if port $PORT is free..."
+if lsof -i :$PORT -sTCP:LISTEN > /dev/null 2>&1; then
+  echo "Port $PORT is in use, attempting to free it..."
+  fuser -k $PORT/tcp || true
+fi
+
+echo "Ensuring directory permissions..."
+mkdir -p /app/tmp/cache /app/log
+chown -R 1000:1000 /app/tmp /app/log
+chmod -R 755 /app/tmp /app/log
+
+export RAILS_ENV=${RAILS_ENV:-production}
+
+LOGFILE="/app/log/${RAILS_ENV}.log"
+touch "$LOGFILE"
+chown 1000:1000 "$LOGFILE"
+chmod 664 "$LOGFILE"
+
+if [ "$1" = "bundle" ] && [ "$2" = "exec" ] && [ "$3" = "rails" ] && [ "$4" = "server" ]; then
+  echo "Preparing database..."
+  ./bin/rails db:prepare
+fi
+
+echo "Starting main process..."
+exec "$@"

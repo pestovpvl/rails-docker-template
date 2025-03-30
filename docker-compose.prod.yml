@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: postgres://postgres:password@db:5432/{{APP_NAME}}_production
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    volumes:
+      - gem_cache:/usr/local/bundle
+    depends_on:
+      - db
+      - redis
+    command: bundle exec rails server -b 0.0.0.0 -p {{PORT}} -e production
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: {{APP_NAME}}_production
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    volumes:
+      - redis_data:/data
+
+volumes:
+  gem_cache:
+  postgres_data:
+  redis_data:

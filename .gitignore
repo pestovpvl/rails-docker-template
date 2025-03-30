@@ -1,0 +1,15 @@
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/.env
+/.DS_Store
+/node_modules
+/vendor/bundle
+/coverage
+*.swp
+*.bak
+*.tmp
+*.log
+*.sqlite3
+/byebug_history
