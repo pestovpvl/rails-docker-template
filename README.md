@@ -36,8 +36,9 @@ Make sure the following tools are installed:
 ```bash
 git clone https://github.com/yourname/rails-docker-template.git
 cd rails-docker-template
+```
 
-## Create a new Rails app from the template
+### 2. Create a new Rails app from the template
 
 ```bash
 ./init-new-project.sh myapp 3201
@@ -45,56 +46,73 @@ cd /var/www/myapp
 make up
 ```
 
-	•	myapp: name of your new app
-	•	3201: the port your app will be exposed on (e.g. http://localhost:3201)
+- `myapp`: name of your new app
+- `3201`: the port your app will be exposed on (e.g. http://localhost:3201)
 
-## Manage your app using Makefile
+### 3. Manage your app using Makefile
 
 ```bash
-  make up           # Build and start the app
-  make down         # Stop and remove containers
-  make rebuild      # Rebuild containers
-  make logs         # View app logs
-  make sh           # Open a bash shell inside the app container
-  make psql         # Connect to PostgreSQL via psql
-  make db-backup    # Create a backup of the database
-  make db-restore   # Restore database from backup.sql
+make up           # Build and start the app
+make down         # Stop and remove containers
+make rebuild      # Rebuild containers
+make logs         # View app logs
+make sh           # Open a bash shell inside the app container
+make psql         # Connect to PostgreSQL via psql
+make db-backup    # Create a backup of the database
+make db-restore   # Restore database from backup.sql
 ```
+
+---
 
 ## 🛠 Configuration
 
-Copy .env.example to .env and fill in your secrets:
+Copy `.env.example` to `.env` and fill in your secrets:
 
 ```bash
 cp .env.example .env
 ```
 
 Example:
-```bash
+
+```env
 SECRET_KEY_BASE=your-actual-secret
 ```
 
 You can generate a secret using:
+
 ```bash
 rails secret
 ```
+
+---
+
 ## 📁 Directory Structure
 
+```
 rails-docker-template/
 ├── bin/
-│   └── docker-entrypoint       # Custom container entrypoint
-├── Dockerfile                  # Rails app Dockerfile
-├── docker-compose.yml          # Base Compose file
-├── docker-compose.override.yml # Local development overrides
-├── docker-compose.prod.yml     # Production config
-├── Makefile                    # App management commands
-├── .env.example                # Sample environment config
-└── init-new-project.sh         # Script to generate new app from template
+│   └── docker-entrypoint         # Custom container entrypoint
+├── Dockerfile                    # Rails app Dockerfile
+├── docker-compose.yml            # Base Compose file
+├── docker-compose.override.yml   # Local development overrides
+├── docker-compose.prod.yml       # Production config
+├── Makefile                      # App management commands
+├── .env.example                  # Sample environment config
+└── init-new-project.sh           # Script to generate new app from template
+```
+
+---
 
 ## 🧰 Recommended Workflow
 
-	1.	Clone the template
-	2.	Run init-new-project.sh with app name and port
-	3.	Enter the new folder
-	4.	Run make up
-	5.	Start building your Rails app!
+1. Clone the template  
+2. Run `init-new-project.sh` with app name and port  
+3. Enter the new folder  
+4. Run `make up`  
+5. Start building your Rails app!
+
+---
+
+## 📃 License
+
+MIT
