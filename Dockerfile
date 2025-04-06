@@ -1,16 +1,28 @@
 FROM ruby:3.3-slim
 
+# Force rebuild marker
+RUN echo "FORCE BUILD v1"
+
+# Install system dependencies
+RUN apt-get update -qq && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    libyaml-dev \
+    postgresql-client \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
-    curl libjemalloc2 libvips postgresql-client lsof libyaml-dev libpq-dev && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
-
-COPY . .
-
+# Install Ruby dependencies
+COPY Gemfile Gemfile.lock ./
 RUN gem install bundler && bundle install
 
-EXPOSE {{PORT}}
+# Copy all source files
+COPY . .
 
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "{{PORT}}"]
+EXPOSE 3000
+
+# Start the Rails server
+CMD ["bin/rails", "s", "-b", "0.0.0.0"]
